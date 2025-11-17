@@ -13,22 +13,23 @@ services:
     ports:
       - "8001:8000"
     volumes:
-      - .:/app  
+      - .:/app
 
   db:
     image: postgres:15
     container_name: nutribot_db
     restart: unless-stopped
-    environment:
+    env_file:             
+      - .env                
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql  
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
     ports:
       - "5436:5432"
     networks:
       - nutrinet
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres -d Nutri_db -h localhost"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} -h localhost"]
       interval: 10s
       timeout: 5s
       retries: 10
