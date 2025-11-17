@@ -1,0 +1,44 @@
+services:
+  nutribot:
+    build: .
+    container_name: nutribot
+    env_file:
+      - .env
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+    networks:
+      - nutrinet
+    ports:
+      - "8001:8000"
+    volumes:
+      - .:/app  
+
+  db:
+    image: postgres:15
+    container_name: nutribot_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: KantN1122@V
+      POSTGRES_DB: Nutri_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql   # ← автозагрузка дампа при создании
+    ports:
+      - "5436:5432"
+    networks:
+      - nutrinet
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d Nutri_db -h localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  postgres_data:
+
+networks:
+  nutrinet:
