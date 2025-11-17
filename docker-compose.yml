@@ -20,12 +20,9 @@ services:
     container_name: nutribot_db
     restart: unless-stopped
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: KantN1122@V
-      POSTGRES_DB: Nutri_db
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql   # ← автозагрузка дампа при создании
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql  
     ports:
       - "5436:5432"
     networks:
